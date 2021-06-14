@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Users from './components/users/Users';
 import axios from 'axios';
+
+import GithubState from './context/github/GithubState';
+
 import './App.css';
 import Search from './components/users/Search';
 import Alert from './components/layout/Alert';
@@ -86,50 +89,52 @@ const App = () => {
   };
 
   return (
-    <Router>
-      <div className='App'>
-        <Navbar />
-        <div className='container'>
-          <Alert alert={alert} />
+    <GithubState>
+      <Router>
+        <div className='App'>
+          <Navbar />
+          <div className='container'>
+            <Alert alert={alert} />
 
-          <Switch>
-            <Route
-              exact
-              path='/'
-              render={(props) => (
-                <>
-                  <Search
-                    searchUsers={searchUsers}
-                    clearUsers={clearUsers}
-                    showClear={users.length > 0 ? true : false}
-                    setAlert={showAlert}
+            <Switch>
+              <Route
+                exact
+                path='/'
+                render={(props) => (
+                  <>
+                    <Search
+                      searchUsers={searchUsers}
+                      clearUsers={clearUsers}
+                      showClear={users.length > 0 ? true : false}
+                      setAlert={showAlert}
+                    />
+
+                    <Users loading={loading} users={users} />
+                  </>
+                )}
+              />
+
+              <Route exact path='/about' component={About} />
+
+              <Route
+                exact
+                path='/user/:login'
+                render={(props) => (
+                  <User
+                    {...props}
+                    getUser={getUser}
+                    getUserRepos={getUserRepos}
+                    user={user}
+                    repos={repos}
+                    loading={loading}
                   />
-
-                  <Users loading={loading} users={users} />
-                </>
-              )}
-            />
-
-            <Route exact path='/about' component={About} />
-
-            <Route
-              exact
-              path='/user/:login'
-              render={(props) => (
-                <User
-                  {...props}
-                  getUser={getUser}
-                  getUserRepos={getUserRepos}
-                  user={user}
-                  repos={repos}
-                  loading={loading}
-                />
-              )}
-            />
-          </Switch>
+                )}
+              />
+            </Switch>
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </GithubState>
   );
 };
 
